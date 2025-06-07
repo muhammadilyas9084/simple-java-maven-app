@@ -2,23 +2,26 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk17'
-        maven 'M3'
+        jdk 'jdk17'     // Must match the name defined in Global Tool Configuration
+        maven 'M3'      // Must match the name defined in Global Tool Configuration
     }
 
     stages {
         stage('Build') {
             steps {
+                echo 'Starting Build...'
                 sh 'mvn -B -DskipTests clean package'
             }
         }
 
         stage('Test') {
             steps {
+                echo 'Running Tests...'
                 sh 'mvn test'
             }
             post {
                 always {
+                    echo 'Publishing Test Reports...'
                     junit 'target/surefire-reports/*.xml'
                 }
             }
@@ -26,6 +29,7 @@ pipeline {
 
         stage('Deliver') {
             steps {
+                echo 'Delivering Build Artifact...'
                 sh './jenkins/scripts/deliver.sh'
             }
         }
