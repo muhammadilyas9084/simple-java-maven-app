@@ -2,29 +2,23 @@ pipeline {
     agent any
 
     tools {
-        maven 'M3'  // Replace 'M3' with your actual Maven tool name configured in Jenkins
-    }
-
-    options {
-        skipStagesAfterUnstable()
+        jdk 'jdk17'
+        maven 'M3'
     }
 
     stages {
         stage('Build') {
             steps {
-                echo 'Building the application...'
                 sh 'mvn -B -DskipTests clean package'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running unit tests...'
                 sh 'mvn test'
             }
             post {
                 always {
-                    echo 'Publishing test results...'
                     junit 'target/surefire-reports/*.xml'
                 }
             }
@@ -32,7 +26,6 @@ pipeline {
 
         stage('Deliver') {
             steps {
-                echo 'Delivering the application...'
                 sh './jenkins/scripts/deliver.sh'
             }
         }
